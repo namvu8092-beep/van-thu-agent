@@ -1325,7 +1325,7 @@
         .step-text p { font-size: 12px; color: var(--text-secondary); line-height: 1.45; }
     </style>
 </head>
-<body>
+<body class="dark-theme">
 
     <!-- Header -->
     <header>
@@ -1347,7 +1347,7 @@
 
             <!-- Theme Switcher -->
             <button class="theme-toggle-btn" id="themeToggleBtn" onclick="toggleTheme()">
-                <span id="themeIcon">🌙</span> <span id="themeText">Terminal Dark</span>
+                <span id="themeIcon">☀️</span> <span id="themeText">Executive Light</span>
             </button>
         </div>
     </header>
@@ -2671,7 +2671,12 @@ graph TD
             }
         }
 
-        if (localStorage.getItem('theme_preference') === 'dark') {
+        const savedTheme = localStorage.getItem('theme_preference');
+        if (savedTheme === 'light') {
+            document.body.classList.remove('dark-theme');
+            document.getElementById('themeIcon').textContent = '🌙';
+            document.getElementById('themeText').textContent = 'Terminal Dark';
+        } else {
             document.body.classList.add('dark-theme');
             document.getElementById('themeIcon').textContent = '☀️';
             document.getElementById('themeText').textContent = 'Executive Light';
@@ -2899,31 +2904,26 @@ graph TD
         function renderMarkdownDocument(raw) {
             if (!raw) return '';
             
-            // Clean KaTeX and special symbols
-            let text = raw
-                .replace(/\ge/g, '≥')
-                .replace(/\le/g, '≤')
-                .replace(/\times/g, '×')
-                .replace(/\div/g, '÷')
-                .replace(/\$/g, '$')
-                .replace(/$([^$
-]+)$/g, '$1');
+            var text = raw
+                .split('\ge').join('≥')
+                .split('\le').join('≤')
+                .split('\times').join('×')
+                .split('\div').join('÷')
+                .split('\$').join('$');
 
             if (typeof marked !== 'undefined') {
                 try {
                     return marked.parse(text);
                 } catch(e) {
-                    console.error('Marked parse error, using fallback parser:', e);
+                    console.error('Marked error:', e);
                 }
             }
 
-            // High-precision fallback markdown parser for offline / CDN failure
-            const lines = text.split('
-');
-            let html = [];
-            let inTable = false;
-            let inUl = false;
-            let inOl = false;
+            var lines = text.split(String.fromCharCode(10));
+            var html = [];
+            var inTable = false;
+            var inUl = false;
+            var inOl = false;
 
             function closeLists() {
                 if (inUl) { html.push('</ul>'); inUl = false; }
@@ -2936,47 +2936,51 @@ graph TD
 
             function formatInline(str) {
                 return str
-                    .replace(/**(.*?)**/g, '<strong>$1</strong>')
-                    .replace(/*(.*?)*/g, '<em>$1</em>')
-                    .replace(new RegExp('\x60([^\x60]+)\x60', 'g'), '<code>$1</code>')
-                    .replace(/[([^]]+)](([^)]+))/g, '<a href="$2" target="_blank">$1</a>');
+                    .split('**').map(function(s, idx) { return idx % 2 === 1 ? ('<strong>' + s + '</strong>') : s; }).join('')
+                    .split('*').map(function(s, idx) { return idx % 2 === 1 ? ('<em>' + s + '</em>') : s; }).join('')
+                    .split(String.fromCharCode(96)).map(function(s, idx) { return idx % 2 === 1 ? ('<code>' + s + '</code>') : s; }).join('');
             }
 
-            for (let i = 0; i < lines.length; i++) {
-                let line = lines[i].trim();
+            for (var i = 0; i < lines.length; i++) {
+                var line = lines[i].trim();
 
-                if (/^(-{3,}|*{3,}|_{3,})$/.test(line)) {
+                if (line === '---' || line === '***' || line === '___') {
                     closeLists();
                     closeTable();
                     html.push('<hr>');
                     continue;
                 }
 
-                if (line.startsWith('#')) {
+                if (line.indexOf('#') === 0) {
                     closeLists();
                     closeTable();
-                    let m = line.match(/^(#+)s*(.*)$/);
-                    if (m) {
-                        let level = Math.min(6, m[1].length);
-                        html.push('<h' + level + '>' + formatInline(m[2]) + '</h' + level + '>');
-                        continue;
-                    }
+                    var hashes = 0;
+                    while (hashes < line.length && line.charAt(hashes) === '#') hashes++;
+                    var level = Math.min(6, hashes);
+                    var title = line.substring(hashes).trim();
+                    html.push('<h' + level + '>' + formatInline(title) + '</h' + level + '>');
+                    continue;
                 }
 
-                if (line.startsWith('|') && line.endsWith('|')) {
+                if (line.charAt(0) === '|' && line.charAt(line.length - 1) === '|') {
                     closeLists();
-                    let cells = line.slice(1, -1).split('|').map(c => c.trim());
-                    if (cells.every(c => /^:?-+:?$/.test(c))) {
-                        continue;
+                    var rawCells = line.substring(1, line.length - 1).split('|');
+                    var cells = [];
+                    for (var c = 0; c < rawCells.length; c++) cells.push(rawCells[c].trim());
+                    var isDelimiter = true;
+                    for (var d = 0; d < cells.length; d++) {
+                        if (cells[d].replace(/[-:]/g, '').length !== 0) { isDelimiter = false; break; }
                     }
+                    if (isDelimiter) continue;
+
                     if (!inTable) {
                         inTable = true;
                         html.push('<table><thead><tr>');
-                        cells.forEach(h => html.push('<th>' + formatInline(h) + '</th>'));
+                        for (var h = 0; h < cells.length; h++) html.push('<th>' + formatInline(cells[h]) + '</th>');
                         html.push('</tr></thead><tbody>');
                     } else {
                         html.push('<tr>');
-                        cells.forEach(c => html.push('<td>' + formatInline(c) + '</td>'));
+                        for (var r = 0; r < cells.length; r++) html.push('<td>' + formatInline(cells[r]) + '</td>');
                         html.push('</tr>');
                     }
                     continue;
@@ -2984,33 +2988,32 @@ graph TD
                     closeTable();
                 }
 
-                if (/^[-*+]s+/.test(line)) {
+                if (line.indexOf('* ') === 0 || line.indexOf('- ') === 0 || line.indexOf('+ ') === 0) {
                     closeTable();
                     if (inOl) { html.push('</ol>'); inOl = false; }
                     if (!inUl) { html.push('<ul>'); inUl = true; }
-                    let item = line.replace(/^[-*+]s+/, '');
+                    var item = line.substring(2).trim();
                     html.push('<li>' + formatInline(item) + '</li>');
                     continue;
                 }
 
-                if (/^d+.s+/.test(line)) {
+                if (line.charAt(0) >= '0' && line.charAt(0) <= '9' && line.indexOf('. ') > 0) {
                     closeTable();
                     if (inUl) { html.push('</ul>'); inUl = false; }
                     if (!inOl) { html.push('<ol>'); inOl = true; }
-                    let item = line.replace(/^d+.s+/, '');
-                    html.push('<li>' + formatInline(item) + '</li>');
+                    var itemOl = line.substring(line.indexOf('. ') + 2).trim();
+                    html.push('<li>' + formatInline(itemOl) + '</li>');
                     continue;
                 }
 
-                if (line.startsWith('>')) {
+                if (line.charAt(0) === '>') {
                     closeLists();
                     closeTable();
-                    let bq = line.replace(/^>s*/, '');
-                    html.push('<blockquote>' + formatInline(bq) + '</blockquote>');
+                    html.push('<blockquote>' + formatInline(line.substring(1).trim()) + '</blockquote>');
                     continue;
                 }
 
-                if (!line) {
+                if (line.length === 0) {
                     closeLists();
                     closeTable();
                     continue;
@@ -3023,8 +3026,7 @@ graph TD
 
             closeLists();
             closeTable();
-            return html.join('
-');
+            return html.join(String.fromCharCode(10));
         }
 
         function openModal(r) {
