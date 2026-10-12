@@ -1,13 +1,14 @@
-# HƯỚNG DẪN TRA CỨU & SỬ DỤNG BỘ MẪU BÁO CÁO DOANH NGHIỆP
+# VĂN THƯ AGENT - HỆ THỐNG QUẢN TRỊ & BÁO CÁO DOANH NGHIỆP
 *(Phiên bản mở rộng đặc biệt: Bổ sung Chuyên đề Tài chính - Ngân hàng & Thẩm định Tín dụng)*
 
-Chào anh, toàn bộ hệ thống báo cáo và bộ mẫu biểu đã được phân loại khoa học vào các thư mục theo chuẩn mực quản trị, quy định pháp luật Việt Nam và **chuyên đề nghiệp vụ Tài chính - Ngân hàng**.
+Chào anh, toàn bộ hệ thống báo cáo và bộ mẫu biểu đã được đồng bộ trực tuyến 24/7 và phân loại khoa học theo chuẩn mực quản trị, quy định pháp luật Việt Nam và **chuyên đề nghiệp vụ Tài chính - Ngân hàng**.
 
 ---
 
 ## 🌟 1. TRUNG TÂM TRA CỨU TRỰC QUAN & MA TRẬN PHÂN LOẠI DOANH NGHIỆP
-Anh có thể nhấp đúp để mở file HTML này trực tiếp trên trình duyệt Web (Chrome / Safari):
-- 🖥️ **Ứng dụng Tra cứu & Sơ đồ Trực quan:** [SODO_HE_THONG_BAO_CAO_DOANH_NGHIEP.html](file:///Users/cobyvu88/Desktop/Tài liệu DN/00_SO_DO_TRUC_QUAN/SODO_HE_THONG_BAO_CAO_DOANH_NGHIEP.html)
+Anh có thể truy cập trực tiếp trên mọi thiết bị (máy tính, điện thoại, máy tính bảng):
+- 🌐 **Cổng Web Trực Tuyến 24/7 (Văn Thư Agent):** [https://namvu8092-beep.github.io/van-thu-agent/](https://namvu8092-beep.github.io/van-thu-agent/)
+- 🖥️ **Ứng dụng Tra cứu Offline (Local):** [index.html](file:///Users/cobyvu88/Desktop/Tài liệu DN/index.html) hoặc [SODO_HE_THONG_BAO_CAO_DOANH_NGHIEP.html](file:///Users/cobyvu88/Desktop/Tài liệu DN/00_SO_DO_TRUC_QUAN/SODO_HE_THONG_BAO_CAO_DOANH_NGHIEP.html)
 - 🏢 **Ma trận Báo cáo Theo Từng Loại hình Doanh nghiệp:** [MA_TRAN_BAO_CAO_THEO_TUNG_LOAI_HINH_DOANH_NGHIEP.md](file:///Users/cobyvu88/Desktop/Tài liệu DN/MA_TRAN_BAO_CAO_THEO_TUNG_LOAI_HINH_DOANH_NGHIEP.md) (Hướng dẫn chi tiết nghĩa vụ báo cáo, căn cứ pháp lý, kỳ hạn và bộ công cụ cho: Công ty Cổ phần/Đại chúng, Doanh nghiệp FDI, Doanh nghiệp SME/TNHH, Ngân hàng Thương mại & TCTD, Doanh nghiệp Sản xuất vs Thương mại/Dịch vụ).
 
 ---
